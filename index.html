@@ -1187,7 +1187,7 @@ section{padding:110px 0;position:relative}
         </div>
       </div>
       <div class="hero__portrait">
-        <div class="portrait-frame" id="portrait"><img src="profile.jpeg" alt="Aramide" /></div>
+        <div class="portrait-frame" id="portrait"><img src="Profile.jpeg" alt="Aramide" /></div>
         <div class="portrait-badge"><span class="pulse"></span><strong>Lagos, NG</strong> · Open to work</div>
         <div class="code-chip"><span class="k">const</span> <span class="v">build</span> = () =&gt; 🚀</div>
       </div>
@@ -1492,15 +1492,19 @@ section{padding:110px 0;position:relative}
         <h3>Say hi — I don't bite 👋</h3>
         <p>Fill out the form below and I'll get back to you within 24 hours.</p>
 
-        <form class="contact-form" id="contactForm"
-          action="https://formsubmit.co/aramidealeem@gmail.com"
+                <form class="contact-form" id="contactForm"
+          action="https://api.web3forms.com/submit"
           method="POST">
-          <!-- FormSubmit options -->
-          <input type="hidden" name="_subject" value="New message from your portfolio!">
-          <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_captcha" value="true">
+          
+          <!-- Web3Forms Access Key -->
+          <input type="hidden" name="access_key" value="672a5ecc-db2c-4a0e-a802-4a5c859bb3ac">
+          
+          <!-- Web3Forms Options -->
+          <input type="hidden" name="subject" value="New message from your portfolio!">
+          <input type="hidden" name="from_name" value="Aramide Portfolio">
+          
           <!-- Honeypot: bots fill this, humans don't -->
-          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+          <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
 
           <div class="input-group">
             <label for="cName">Your name</label>
