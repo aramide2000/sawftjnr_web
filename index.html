@@ -8,8 +8,14 @@
 <meta property="og:title" content="Aramide — Full Stack Developer" />
 <meta property="og:description" content="Full-stack developer crafting fast, accessible, beautiful digital products." />
 <meta property="og:type" content="website" />
-<meta property="og:image" content="Profile.jpeg" />
+<!-- FIX #21: og:image must be absolute -->
+<meta property="og:image" content="https://yourdomain.com/profile.jpeg" />
+<meta property="og:url" content="https://yourdomain.com/" />
+<!-- FIX: complete Twitter card -->
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Aramide — Full Stack Developer" />
+<meta name="twitter:description" content="Full-stack developer crafting fast, accessible, beautiful digital products." />
+<meta name="twitter:image" content="https://yourdomain.com/profile.jpeg" />
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%236ee7ff'/><stop offset='1' stop-color='%23a78bfa'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='%2308090d'/><text x='50' y='72' font-family='Space Grotesk,sans-serif' font-size='68' font-weight='700' text-anchor='middle' fill='url(%23g)' font-style='italic'>A</text></svg>" />
 
@@ -211,12 +217,16 @@ html[data-theme="light"] .cursor-glow{
   display:flex;align-items:center;justify-content:space-between;
   transition:all .4s var(--ease);
 }
+/* FIX #28: fallback for browsers without color-mix */
 .nav.scrolled{
   padding:14px 6vw;
-  background:color-mix(in srgb,var(--bg) 75%,transparent);
+  background:rgba(8,9,13,0.75);
   backdrop-filter:blur(16px) saturate(160%);
   -webkit-backdrop-filter:blur(16px) saturate(160%);
   border-bottom:1px solid var(--border);
+}
+@supports (background: color-mix(in srgb, red 50%, transparent)){
+  .nav.scrolled{background:color-mix(in srgb,var(--bg) 75%,transparent);}
 }
 .nav__logo{
   font-family:var(--mono);font-weight:700;font-size:1.5rem;
@@ -247,6 +257,11 @@ html[data-theme="light"] .cursor-glow{
   background-size:220% 100%;background-position:0% 50%;
   -webkit-background-clip:text;background-clip:text;color:transparent;
   animation:logoSheen 6s linear infinite;display:inline-block;
+}
+html[data-theme="light"] .nav__logo-text{
+  background:linear-gradient(90deg,#14151a 0%,#14151a 40%,var(--accent) 55%,var(--accent-2) 75%,#14151a 100%);
+  background-size:220% 100%;background-position:0% 50%;
+  -webkit-background-clip:text;background-clip:text;
 }
 @keyframes logoSheen{
   0%{background-position:0% 50%}
@@ -689,11 +704,19 @@ section{padding:110px 0;position:relative}
   transform-style:preserve-3d;will-change:transform;
 }
 .project.hidden{display:none}
+/* FIX #9: proper gradient border */
 .project::before{
-  content:'';position:absolute;inset:-1px;border-radius:inherit;padding:1px;
+  content:'';position:absolute;inset:-1px;border-radius:inherit;
+  padding:1px;
   background:linear-gradient(135deg,var(--accent),var(--accent-2),var(--accent-3),var(--accent));
-  background-size:300% 300%;opacity:0;transition:opacity .4s ease;
-  z-index:0;pointer-events:none;animation:frameShift 5s linear infinite;
+  background-size:300% 300%;
+  opacity:0;transition:opacity .4s ease;
+  z-index:0;pointer-events:none;
+  animation:frameShift 5s linear infinite;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;
 }
 .project:hover::before{opacity:1}
 .project:hover{
@@ -741,10 +764,12 @@ section{padding:110px 0;position:relative}
   background:var(--surface-2);border:1px solid var(--border);
   color:var(--text-dim);
 }
+/* FIX #22/#24: make "View project" a real button-like affordance, keyboard accessible */
 .project__link{
   display:inline-flex;align-items:center;gap:6px;
   font-size:0.85rem;font-weight:500;color:var(--accent);
-  transition:gap .3s;
+  transition:gap .3s;background:none;border:none;padding:0;cursor:pointer;
+  font-family:inherit;
 }
 .project:hover .project__link{gap:10px}
 .project__link svg{width:14px;height:14px}
@@ -753,10 +778,14 @@ section{padding:110px 0;position:relative}
 .modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
 .modal.open{display:flex;animation:modalFade .3s ease}
 @keyframes modalFade{from{opacity:0}to{opacity:1}}
+/* FIX #28: fallback for color-mix */
 .modal__backdrop{
   position:absolute;inset:0;
-  background:color-mix(in srgb,var(--bg) 80%,transparent);
+  background:rgba(8,9,13,0.8);
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+@supports (background: color-mix(in srgb, red 50%, transparent)){
+  .modal__backdrop{background:color-mix(in srgb,var(--bg) 80%,transparent);}
 }
 .modal__panel{
   position:relative;z-index:2;
@@ -964,7 +993,7 @@ section{padding:110px 0;position:relative}
 .to-top svg.icon{width:20px;height:20px;position:relative;z-index:2}
 .to-top__ring{position:absolute;inset:-1px;transform:rotate(-90deg);pointer-events:none}
 .to-top__ring circle{
-  fill:none;stroke-width:2;stroke:url(#topRingGrad);stroke-linecap:round;
+  fill:none;stroke-width:2;stroke:#6ee7ff;stroke-linecap:round;
   transition:stroke-dashoffset .15s linear;
 }
 .to-top__fill{
@@ -985,6 +1014,8 @@ section{padding:110px 0;position:relative}
 /* REVEAL */
 .reveal{opacity:0;transform:translateY(30px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
 .reveal.in{opacity:1;transform:none}
+/* FIX: fallback for browsers without IntersectionObserver */
+.no-io .reveal{opacity:1;transform:none}
 
 /* MOBILE NAV */
 @media(max-width:820px){
@@ -1050,6 +1081,10 @@ section{padding:110px 0;position:relative}
   margin-left:auto;font-family:var(--mono);font-size:0.68rem;
   color:var(--text-mute);padding:2px 6px;border-radius:4px;
   background:var(--surface);border:1px solid var(--border);
+}
+.cmdk__empty{
+  padding:28px 20px;text-align:center;
+  font-family:var(--mono);font-size:0.82rem;color:var(--text-mute);
 }
 
 /* TOAST */
@@ -1117,7 +1152,8 @@ section{padding:110px 0;position:relative}
   <div class="loader__bar"><span id="loaderBarFill"></span></div>
 </div>
 
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<!-- FIX #32: SVG defs given nonzero size for Safari compatibility -->
+<svg width="1" height="1" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
   <defs>
     <linearGradient id="topRingGrad" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#6ee7ff"/>
@@ -1173,21 +1209,22 @@ section{padding:110px 0;position:relative}
       <div class="hero__content">
         <div class="hero__status"><span class="dot"></span> Available for freelance work</div>
         <h1 class="hero__title">Building digital<br>experiences that <span class="grad">matter</span>.</h1>
-        <p class="hero__typed" id="typed"><span id="typedText"></span><span class="caret"></span></p>
+        <!-- FIX: removed dead id="typed" -->
+        <p class="hero__typed"><span id="typedText"></span><span class="caret"></span></p>
         <p class="hero__desc">I'm <strong style="color:var(--text)">Aramide</strong> — a full-stack developer who blends clean code with thoughtful design. I turn ideas into fast, accessible, and beautiful products on the web.</p>
         <div class="hero__actions">
           <a href="#projects" class="btn btn--primary magnetic">View my work <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
           <a href="resume.html" download class="btn btn--ghost magnetic">Download CV <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M6 10l6 6 6-6M5 21h14"/></svg></a>
         </div>
         <div class="hero__socials">
-          <a href="https://github.com/aramide2000" target="_blank" rel="noopener" class="social" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.8.1-.8 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.4 3.6 1.1.1-.8.4-1.4.8-1.7-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0C17.6 4.7 18.6 5 18.6 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3z"/></svg></a>
+          <a href="https://github.com/aramide2000" target="_blank" rel="noopener noreferrer" class="social" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.8.1-.8.1-.8 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.4 3.6 1.1.1-.8.4-1.4.8-1.7-2.7-.3-5.5-1.3-5.5-6 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0C17.6 4.7 18.6 5 18.6 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3z"/></svg></a>
           <a href="mailto:aramidealeem@gmail.com" class="social" aria-label="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></a>
-          <a href="https://wa.me/+2349058546155" target="_blank" rel="noopener" class="social" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M.06 24l1.7-6.2A11.9 11.9 0 01.15 11.9C.15 5.4 5.5.1 12 .1S23.9 5.4 23.9 11.9 18.5 23.8 12 23.8a11.9 11.9 0 01-5.7-1.4L.06 24z"/></svg></a>
+          <a href="https://wa.me/+2349058546155" target="_blank" rel="noopener noreferrer" class="social" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M.06 24l1.7-6.2A11.9 11.9 0 01.15 11.9C.15 5.4 5.5.1 12 .1S23.9 5.4 23.9 11.9 18.5 23.8 12 23.8a11.9 11.9 0 01-5.7-1.4L.06 24z"/></svg></a>
           <a href="tel:+2349058546155" class="social" aria-label="Phone"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3.1-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.6a2 2 0 01-.5 2.1L8 9.6a16 16 0 006 6l1.2-1.1a2 2 0 012.1-.5c.8.3 1.7.5 2.6.6a2 2 0 011.7 2z"/></svg></a>
         </div>
       </div>
       <div class="hero__portrait">
-        <div class="portrait-frame" id="portrait"><img src="Profile.jpeg" alt="Aramide" /></div>
+        <div class="portrait-frame" id="portrait"><img src="profile.jpeg" alt="Aramide" /></div>
         <div class="portrait-badge"><span class="pulse"></span><strong>Lagos, NG</strong> · Open to work</div>
         <div class="code-chip"><span class="k">const</span> <span class="v">build</span> = () =&gt; 🚀</div>
       </div>
@@ -1343,7 +1380,8 @@ section{padding:110px 0;position:relative}
             <h3 class="project__title">PKT Sounds</h3>
             <p class="project__desc">A music instrument store where musicians can browse and shop every kind of instrument — all in one clean, easy-to-navigate marketplace.</p>
             <div class="project__tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span></div>
-            <span class="project__link">View project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+            <!-- FIX #22/#24: real button, keyboard accessible -->
+            <button type="button" class="project__link">View project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></button>
           </div>
         </div>
       </article>
@@ -1364,7 +1402,7 @@ section{padding:110px 0;position:relative}
             <h3 class="project__title">Hope Found</h3>
             <p class="project__desc">An orphanage website built with heart — giving people a simple, trustworthy way to donate and support children in need.</p>
             <div class="project__tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span></div>
-            <span class="project__link">View project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+            <button type="button" class="project__link">View project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></button>
           </div>
         </div>
       </article>
@@ -1385,7 +1423,7 @@ section{padding:110px 0;position:relative}
             <h3 class="project__title">Luminous Salon</h3>
             <p class="project__desc">A premium hair styling website where clients can book an appointment and place hair orders in just a few clicks.</p>
             <div class="project__tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span></div>
-            <span class="project__link">View project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+            <button type="button" class="project__link">View project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></button>
           </div>
         </div>
       </article>
@@ -1406,7 +1444,7 @@ section{padding:110px 0;position:relative}
             <h3 class="project__title">PowerFlex Gym</h3>
             <p class="project__desc">A fitness website that lets members book gym sessions quickly and easily — built to feel energetic and motivating.</p>
             <div class="project__tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span></div>
-            <span class="project__link">View project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+            <button type="button" class="project__link">View project <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></button>
           </div>
         </div>
       </article>
@@ -1476,7 +1514,7 @@ section{padding:110px 0;position:relative}
             <div class="contact__item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3.1-8.7A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.6a2 2 0 01-.5 2.1L8 9.6a16 16 0 006 6l1.2-1.1a2 2 0 012.1-.5c.8.3 1.7.5 2.6.6a2 2 0 011.7 2z"/></svg></div>
             <div class="contact__item-body"><div class="contact__item-label">Phone</div><div class="contact__item-value">+234 905 8546 155</div></div>
           </a>
-          <a href="https://wa.me/+2349058546155" target="_blank" rel="noopener" class="contact__item">
+          <a href="https://wa.me/+2349058546155" target="_blank" rel="noopener noreferrer" class="contact__item">
             <div class="contact__item-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M.06 24l1.7-6.2A11.9 11.9 0 01.15 11.9C.15 5.4 5.5.1 12 .1S23.9 5.4 23.9 11.9 18.5 23.8 12 23.8a11.9 11.9 0 01-5.7-1.4L.06 24z"/></svg></div>
             <div class="contact__item-body"><div class="contact__item-label">WhatsApp</div><div class="contact__item-value">Chat instantly</div></div>
           </a>
@@ -1487,24 +1525,18 @@ section{padding:110px 0;position:relative}
         </div>
       </div>
 
-      <!-- CONTACT FORM (wired to FormSubmit) -->
       <div class="contact__cta reveal">
         <h3>Say hi — I don't bite 👋</h3>
         <p>Fill out the form below and I'll get back to you within 24 hours.</p>
 
-                <form class="contact-form" id="contactForm"
+        <form class="contact-form" id="contactForm"
           action="https://api.web3forms.com/submit"
           method="POST">
-          
-          <!-- Web3Forms Access Key -->
           <input type="hidden" name="access_key" value="672a5ecc-db2c-4a0e-a802-4a5c859bb3ac">
-          
-          <!-- Web3Forms Options -->
           <input type="hidden" name="subject" value="New message from your portfolio!">
           <input type="hidden" name="from_name" value="Aramide Portfolio">
-          
-          <!-- Honeypot: bots fill this, humans don't -->
-          <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
+          <!-- FIX #25: honeypot hidden via aria + tabindex, not just display -->
+          <input type="checkbox" name="botcheck" aria-hidden="true" tabindex="-1" style="display:none!important">
 
           <div class="input-group">
             <label for="cName">Your name</label>
@@ -1544,7 +1576,8 @@ section{padding:110px 0;position:relative}
 
 <button class="to-top" id="toTop" aria-label="Back to top">
   <svg class="to-top__ring" viewBox="0 0 56 56">
-    <circle cx="28" cy="28" r="26" stroke-dasharray="163.4" stroke-dashoffset="163.4" id="topRingCircle"/>
+    <!-- FIX #5: dasharray matches JS RING_LEN -->
+    <circle cx="28" cy="28" r="26" stroke-dasharray="163.36" stroke-dashoffset="163.36" id="topRingCircle"/>
   </svg>
   <span class="to-top__fill"></span>
   <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
@@ -1579,8 +1612,8 @@ section{padding:110px 0;position:relative}
       <p class="modal__desc" id="modalDesc"></p>
       <ul class="modal__features" id="modalFeatures"></ul>
       <div class="modal__actions">
-        <a href="#" id="modalLive" class="btn btn--primary" target="_blank" rel="noopener">Live demo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
-        <a href="#" id="modalCode" class="btn btn--ghost" target="_blank" rel="noopener">Source code</a>
+        <a href="#" id="modalLive" class="btn btn--primary" target="_blank" rel="noopener noreferrer">Live demo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+        <a href="#" id="modalCode" class="btn btn--ghost" target="_blank" rel="noopener noreferrer">Source code</a>
       </div>
     </div>
   </div>
@@ -1588,12 +1621,28 @@ section{padding:110px 0;position:relative}
 
 <script>
 /* ==========================================================
-   LOADER
+   SAFETY: feature check — reveal fallback
+   ========================================================== */
+if (!('IntersectionObserver' in window)) {
+  document.documentElement.classList.add('no-io');
+}
+
+/* ==========================================================
+   LOADER (with failsafe — FIX #4)
    ========================================================== */
 (function loader(){
   const el = document.getElementById('loader');
   const pct = document.getElementById('loaderPct');
   const bar = document.getElementById('loaderBarFill');
+  let finished = false;
+
+  function finish(){
+    if (finished) return;
+    finished = true;
+    el.classList.add('hide');
+    document.body.classList.remove('loading');
+  }
+
   let progress = 0;
   const tick = () => {
     const remaining = 100 - progress;
@@ -1604,13 +1653,13 @@ section{padding:110px 0;position:relative}
     if(progress < 100){
       setTimeout(tick, 60 + Math.random() * 90);
     } else {
-      setTimeout(() => {
-        el.classList.add('hide');
-        document.body.classList.remove('loading');
-      }, 350);
+      setTimeout(finish, 350);
     }
   };
   setTimeout(tick, 400);
+
+  // Failsafe: force-finish if something goes wrong
+  setTimeout(finish, 8000);
 })();
 
 const $  = (s, el = document) => el.querySelector(s);
@@ -1626,9 +1675,10 @@ function showToast(html, ms = 2200){
   toastTimer = setTimeout(() => toast.classList.remove('show'), ms);
 }
 
-/* THEME */
+/* THEME (with localStorage safety — FIX) */
 (function themeInit(){
-  const saved = localStorage.getItem('theme');
+  let saved = null;
+  try { saved = localStorage.getItem('theme'); } catch(e){}
   const prefersLight = matchMedia('(prefers-color-scheme: light)').matches;
   const initial = saved || (prefersLight ? 'light' : 'dark');
   document.documentElement.setAttribute('data-theme', initial);
@@ -1637,7 +1687,7 @@ function toggleTheme(){
   const cur = document.documentElement.getAttribute('data-theme');
   const next = cur === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
+  try { localStorage.setItem('theme', next); } catch(e){}
   showToast(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg> Theme: ${next}`);
 }
 $('#themeToggle').addEventListener('click', toggleTheme);
@@ -1694,16 +1744,18 @@ navLinks.addEventListener('mouseleave', () => { navPill.style.opacity = 0; });
 /* SPY */
 const sections = ['about','skills','experience','projects','testimonials','contact']
   .map(id => document.getElementById(id)).filter(Boolean);
-const spyObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if(e.isIntersecting){
-      $$('.nav__link').forEach(l => l.classList.toggle(
-        'active', l.getAttribute('href') === '#' + e.target.id
-      ));
-    }
-  });
-}, { rootMargin:'-45% 0px -50% 0px' });
-sections.forEach(s => spyObserver.observe(s));
+if ('IntersectionObserver' in window) {
+  const spyObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        $$('.nav__link').forEach(l => l.classList.toggle(
+          'active', l.getAttribute('href') === '#' + e.target.id
+        ));
+      }
+    });
+  }, { rootMargin:'-45% 0px -50% 0px' });
+  sections.forEach(s => spyObserver.observe(s));
+}
 
 /* TYPING */
 (function type(){
@@ -1722,10 +1774,11 @@ sections.forEach(s => spyObserver.observe(s));
   tick();
 })();
 
-/* TERMINAL TYPING */
+/* TERMINAL TYPING — fully rewritten (FIX #1) */
 (function terminalType(){
   const body = document.getElementById('terminalBody');
   if(!body) return;
+
   const lines = [
     { html: '<span class="pr">$</span> whoami', delay: 500 },
     { html: '<span class="fn">aramide</span> — full-stack developer', delay: 400 },
@@ -1735,70 +1788,75 @@ sections.forEach(s => spyObserver.observe(s));
     { html: '<span class="pr">$</span> echo <span class="str">"Let\'s build something great."</span>', delay: 600 },
     { html: 'Let\'s build something great.', delay: 700, cls:'out' }
   ];
+
+  // Persistent caret element
+  const caret = document.createElement('span');
+  caret.className = 'terminal__caret';
+  body.appendChild(caret);
+
   let idx = 0;
-  const caret = '<span class="terminal__caret"></span>';
   function writeLine(){
-    if(idx >= lines.length){
-      body.innerHTML += caret;
-      return;
-    }
+    if(idx >= lines.length) return;
     const l = lines[idx];
     const div = document.createElement('div');
     div.innerHTML = l.html;
     if(l.cls) div.style.color = '#a78bfa';
-    body.appendChild(div);
-    body.innerHTML += caret;
-    setTimeout(() => {
-      const last = body.lastElementChild;
-      if(last && last.classList && last.classList.contains('terminal__caret')) last.remove();
-      body.innerHTML = body.innerHTML.replace(caret, '');
-      idx++;
-      writeLine();
-    }, l.delay);
+    body.insertBefore(div, caret);
+    setTimeout(() => { idx++; writeLine(); }, l.delay);
   }
   writeLine();
 })();
 
 /* REVEAL */
-const revealObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if(e.isIntersecting){ e.target.classList.add('in'); revealObs.unobserve(e.target); }
-  });
-}, { threshold:0.12, rootMargin:'0px 0px -60px 0px' });
-$$('.reveal').forEach(el => revealObs.observe(el));
+if ('IntersectionObserver' in window) {
+  const revealObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ e.target.classList.add('in'); revealObs.unobserve(e.target); }
+    });
+  }, { threshold:0.12, rootMargin:'0px 0px -60px 0px' });
+  $$('.reveal').forEach(el => revealObs.observe(el));
+}
 
 /* SKILLS / STATS */
-const skillObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if(e.isIntersecting){
-      $$('.skill__fill', e.target).forEach((bar, i) => {
-        setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, i * 90);
-      });
-      skillObs.unobserve(e.target);
-    }
-  });
-}, { threshold:0.35 });
-$$('.skill-card').forEach(c => skillObs.observe(c));
+if ('IntersectionObserver' in window) {
+  const skillObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        $$('.skill__fill', e.target).forEach((bar, i) => {
+          setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, i * 90);
+        });
+        skillObs.unobserve(e.target);
+      }
+    });
+  }, { threshold:0.35 });
+  $$('.skill-card').forEach(c => skillObs.observe(c));
 
-const countObs = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if(!e.isIntersecting) return;
-    const el = e.target;
-    const target = +el.dataset.count;
-    const suffix = el.dataset.suffix || '';
-    const dur = 1400;
-    const start = performance.now();
-    const step = now => {
-      const t = Math.min((now - start) / dur, 1);
-      const eased = 1 - Math.pow(1 - t, 3);
-      el.textContent = Math.round(target * eased) + suffix;
-      if(t < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-    countObs.unobserve(el);
+  const countObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(!e.isIntersecting) return;
+      const el = e.target;
+      const target = +el.dataset.count;
+      const suffix = el.dataset.suffix || '';
+      const dur = 1400;
+      const start = performance.now();
+      const step = now => {
+        const t = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(target * eased) + suffix;
+        if(t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+      countObs.unobserve(el);
+    });
+  }, { threshold:0.6 });
+  $$('[data-count]').forEach(el => countObs.observe(el));
+} else {
+  // fallback: show final values
+  $$('[data-count]').forEach(el => {
+    el.textContent = el.dataset.count + (el.dataset.suffix || '');
   });
-}, { threshold:0.6 });
-$$('[data-count]').forEach(el => countObs.observe(el));
+  $$('.skill__fill').forEach(bar => { bar.style.width = bar.dataset.w + '%'; });
+}
 
 /* CURSOR */
 (function cursor(){
@@ -1828,7 +1886,8 @@ $$('[data-count]').forEach(el => countObs.observe(el));
 })();
 
 /* MAGNETIC + PORTRAIT TILT + SKILL SPOTLIGHT */
-if(matchMedia('(hover:hover)').matches){
+const canHover = matchMedia('(hover:hover)').matches;
+if(canHover){
   $$('.magnetic').forEach(btn => {
     btn.addEventListener('mousemove', e => {
       const r = btn.getBoundingClientRect();
@@ -1840,7 +1899,7 @@ if(matchMedia('(hover:hover)').matches){
   });
 }
 const portrait = $('#portrait');
-if(portrait && matchMedia('(hover:hover)').matches){
+if(portrait && canHover){
   const wrap = portrait.parentElement;
   wrap.addEventListener('mousemove', e => {
     const r = wrap.getBoundingClientRect();
@@ -1860,8 +1919,8 @@ $$('.skill-card').forEach(card => {
   });
 });
 
-/* 3D TILT projects */
-if(matchMedia('(hover:hover)')){
+/* 3D TILT projects — FIX #2: use .matches */
+if(canHover){
   $$('.project.tilt').forEach(card => {
     card.addEventListener('mousemove', e => {
       const r = card.getBoundingClientRect();
@@ -1940,7 +1999,7 @@ $$('[data-close]').forEach(el => el.addEventListener('click', closeModal));
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
 
 /* ==========================================================
-   COMMAND PALETTE
+   COMMAND PALETTE — with empty-state guard (FIX #6)
    ========================================================== */
 const cmdk = $('#cmdk');
 const cmdkInput = $('#cmdkInput');
@@ -1949,22 +2008,22 @@ let cmdkActiveIdx = 0;
 
 const CMDS = [
   { group:'Navigate', items:[
-    { label:'Go to Home',        kbd:'H',  action: () => scrollTo('#top') },
-    { label:'Go to About',       kbd:'A',  action: () => scrollTo('#about') },
-    { label:'Go to Skills',      kbd:'S',  action: () => scrollTo('#skills') },
-    { label:'Go to Experience',  kbd:'E',  action: () => scrollTo('#experience') },
-    { label:'Go to Projects',    kbd:'P',  action: () => scrollTo('#projects') },
-    { label:'Go to Contact',     kbd:'C',  action: () => scrollTo('#contact') },
+    { label:'Go to Home',        kbd:'H',  action: () => scrollToSection('#top') },
+    { label:'Go to About',       kbd:'A',  action: () => scrollToSection('#about') },
+    { label:'Go to Skills',      kbd:'S',  action: () => scrollToSection('#skills') },
+    { label:'Go to Experience',  kbd:'E',  action: () => scrollToSection('#experience') },
+    { label:'Go to Projects',    kbd:'P',  action: () => scrollToSection('#projects') },
+    { label:'Go to Contact',     kbd:'C',  action: () => scrollToSection('#contact') },
   ]},
   { group:'Actions', items:[
     { label:'Toggle theme',           kbd:'T',  action: () => toggleTheme() },
-    // THE FIX IS ON THE LINE BELOW (changed from resume.pdf to resume.html)
-    { label:'Download Resume',        kbd:'D',  action: () => window.open('resume.html','_blank') },
+    { label:'Download Resume',        kbd:'D',  action: () => window.open('resume.html','_blank','noopener') },
     { label:'Copy email',             kbd:'M',  action: () => {
-      navigator.clipboard.writeText('aramidealeem@gmail.com');
-      showToast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Email copied!');
+      navigator.clipboard?.writeText('aramidealeem@gmail.com')
+        .then(() => showToast('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Email copied!'))
+        .catch(() => showToast('Could not copy — copy manually'));
     }},
-    { label:'Open WhatsApp',          kbd:'W',  action: () => window.open('https://wa.me/+2349058546155','_blank') },
+    { label:'Open WhatsApp',          kbd:'W',  action: () => window.open('https://wa.me/+2349058546155','_blank','noopener') },
     { label:'Show keyboard shortcuts',kbd:'?',  action: () => showShortcuts() },
   ]},
   { group:'Projects', items: [
@@ -1975,7 +2034,8 @@ const CMDS = [
   ]}
 ];
 
-function scrollTo(sel){
+// FIX #8: renamed to avoid shadowing window.scrollTo
+function scrollToSection(sel){
   const el = document.querySelector(sel);
   if(!el) return;
   window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior:'smooth' });
@@ -1983,31 +2043,40 @@ function scrollTo(sel){
 function openProjectByTitle(title){
   const card = [...$$('.project')].find(c => c.dataset.title === title);
   if(card){
-    scrollTo('#projects');
+    scrollToSection('#projects');
     setTimeout(() => openModalFromData(card.dataset, [...card.querySelectorAll('.tag')]), 500);
   }
 }
 function buildCmdkList(filter=''){
   const f = filter.trim().toLowerCase();
   cmdkList.innerHTML = '';
-  let firstActive = null;
+  let addedAny = false;
   CMDS.forEach(group => {
     const items = group.items.filter(it => it.label.toLowerCase().includes(f));
     if(!items.length) return;
+    addedAny = true;
     const g = document.createElement('div');
     g.className = 'cmdk__group';
     g.textContent = group.group;
     cmdkList.appendChild(g);
-    items.forEach(it => {
+    items.forEach((it, i) => {
       const row = document.createElement('div');
       row.className = 'cmdk__item';
       row.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
         <span>${it.label}</span>${it.kbd ? `<span class="kbd">${it.kbd}</span>` : ''}`;
       row.addEventListener('click', () => { it.action(); closeCmdk(); });
       cmdkList.appendChild(row);
-      if(!firstActive){ firstActive = row; row.classList.add('active'); }
+      if(!addedAny || cmdkList.querySelectorAll('.cmdk__item').length === 1){
+        row.classList.add('active');
+      }
     });
   });
+  if(!addedAny){
+    const empty = document.createElement('div');
+    empty.className = 'cmdk__empty';
+    empty.textContent = 'No matches — try a different search.';
+    cmdkList.appendChild(empty);
+  }
   cmdkActiveIdx = 0;
 }
 function openCmdk(){
@@ -2026,6 +2095,8 @@ $$('[data-cmdk-close]').forEach(el => el.addEventListener('click', closeCmdk));
 cmdkInput.addEventListener('input', e => buildCmdkList(e.target.value));
 cmdkInput.addEventListener('keydown', e => {
   const items = $$('.cmdk__item');
+  // FIX #6: guard empty list
+  if (!items.length) return;
   if(e.key === 'ArrowDown'){
     e.preventDefault();
     cmdkActiveIdx = (cmdkActiveIdx + 1) % items.length;
@@ -2062,48 +2133,53 @@ document.addEventListener('keydown', e => {
   if(tag === 'INPUT' || tag === 'TEXTAREA') return;
   if(modal.classList.contains('open') || cmdk.classList.contains('open')) return;
   const k = e.key.toLowerCase();
-  if(k === 'h'){ scrollTo('#top'); }
-  else if(k === 'a'){ scrollTo('#about'); }
-  else if(k === 's'){ scrollTo('#skills'); }
-  else if(k === 'e'){ scrollTo('#experience'); }
-  else if(k === 'p'){ scrollTo('#projects'); }
-  else if(k === 'c'){ scrollTo('#contact'); }
+  if(k === 'h'){ scrollToSection('#top'); }
+  else if(k === 'a'){ scrollToSection('#about'); }
+  else if(k === 's'){ scrollToSection('#skills'); }
+  else if(k === 'e'){ scrollToSection('#experience'); }
+  else if(k === 'p'){ scrollToSection('#projects'); }
+  else if(k === 'c'){ scrollToSection('#contact'); }
   else if(k === 't'){ toggleTheme(); }
   else if(k === '?'){ showShortcuts(); }
 });
 
-/* LIVE CLOCK (Lagos) */
+/* LIVE CLOCK (Lagos) — FIX #12: use Intl timezone */
 (function clock(){
   const el = document.getElementById('clock');
   if(!el) return;
   function tick(){
-    const d = new Date();
-    const t = new Date(d.getTime() + (d.getTimezoneOffset() + 60) * 60000);
-    const hh = String(t.getHours()).padStart(2,'0');
-    const mm = String(t.getMinutes()).padStart(2,'0');
-    const ss = String(t.getSeconds()).padStart(2,'0');
-    el.textContent = `${hh}:${mm}:${ss}`;
+    try {
+      const t = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Africa/Lagos',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false
+      }).format(new Date());
+      el.textContent = t;
+    } catch(e){
+      // very old browser fallback
+      const d = new Date();
+      el.textContent = d.toTimeString().slice(0,8);
+    }
   }
   tick();
   setInterval(tick, 1000);
 })();
 
 /* ==========================================================
-   CONTACT FORM — enhance FormSubmit with a nice sending state
+   CONTACT FORM (Web3Forms) — improved error handling
    ========================================================== */
 (function contactForm(){
   const form = document.getElementById('contactForm');
   if(!form) return;
   const btn = document.getElementById('contactSubmit');
+  if(!btn) return;
   const originalBtnHTML = btn.innerHTML;
 
   form.addEventListener('submit', () => {
     btn.disabled = true;
     btn.innerHTML = 'Sending…';
-    // FormSubmit handles the POST and shows its own thank-you page.
   });
 
-  // If user comes back via bfcache, reset the button
   window.addEventListener('pageshow', e => {
     if(e.persisted){
       btn.disabled = false;
@@ -2118,6 +2194,8 @@ document.addEventListener('keydown', e => {
   const target = 'aramide';
   document.addEventListener('keydown', e => {
     if(e.key.length !== 1) return;
+    const tag = document.activeElement?.tagName;
+    if(tag === 'INPUT' || tag === 'TEXTAREA') return;
     buffer = (buffer + e.key.toLowerCase()).slice(-target.length);
     if(buffer === target){
       for(let i = 0; i < 60; i++) spawnConfetti();
